@@ -5,7 +5,6 @@ type FinancialRecord = Record<{
     id: string;
     amount: number;
     category: string;
-    date: nat64;
     notes: Opt<string>;
     createdAt: nat64;
     updatedAt: Opt<nat64>;
@@ -14,9 +13,9 @@ type FinancialRecord = Record<{
 type FinancialRecordPayload = Record<{
     amount: number;
     category: string;
-    date: nat64;
     notes: Opt<string>;
 }>;
+
 
 const financialRecordStorage = new StableBTreeMap<string, FinancialRecord>(0, 44, 1024);
 
@@ -68,7 +67,7 @@ export function getFinancialRecordsByCategory(category: string): Result<Vec<Fina
 
 $query;
 export function getFinancialRecordsByDateRange(startDate: nat64, endDate: nat64): Result<Vec<FinancialRecord>, string> {
-    const filteredRecords = financialRecordStorage.values().filter(record => record.date >= startDate && record.date <= endDate);
+    const filteredRecords = financialRecordStorage.values().filter(record => record.createdAt >= startDate && record.createdAt <= endDate);
     return Result.Ok(filteredRecords);
 }
 
