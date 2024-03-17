@@ -1,0 +1,24 @@
+type FinancialRecord = record {
+  id : text;
+  date : nat64;
+  createdAt : nat64;
+  updatedAt : opt nat64;
+  notes : opt text;
+  category : text;
+  amount : float64;
+};
+type FinancialRecordPayload = record {
+  date : nat64;
+  notes : opt text;
+  category : text;
+  amount : float64;
+};
+type _AzleResult = variant { Ok : FinancialRecord; Err : text };
+type _AzleResult_1 = variant { Ok : vec FinancialRecord; Err : text };
+service : () -> {
+  addFinancialRecord : (FinancialRecordPayload) -> (_AzleResult);
+  deleteFinancialRecord : (text) -> (_AzleResult);
+  getFinancialRecord : (text) -> (_AzleResult) query;
+  getFinancialRecords : () -> (_AzleResult_1) query;
+  updateFinancialRecord : (text, FinancialRecordPayload) -> (_AzleResult);
+}

@@ -1,0 +1,12 @@
+{
+  "canisters": {
+    "finance_tracker": {
+      "type": "custom",
+      "build": "npx azle finance_tracker",
+      "root": "src",
+      "ts": "src/index.ts",
+      "candid": "src/index.did",
+      "wasm": ".azle/finance_tracker/finance_tracker.wasm.gz"
+    }
+  }
+}
