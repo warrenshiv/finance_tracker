@@ -235,7 +235,7 @@ export function getAverageMonthlyIncome(): Result<number, string> {
 $query;
 export function getFinancialRecordsWithNotes(): Result<Vec<FinancialRecord>, string> {
     // Assuming notes being an Opt<string>, you should check for Opt.none() equivalency in TypeScript context.
-    const filteredRecords = financialRecordStorage.values().filter(record => !record.notes && record.notes == null);
+    const filteredRecords = financialRecordStorage.values().filter(record => record.notes && record.notes !== null);
 
     // Check if any records were found
     if (filteredRecords.length === 0) {
@@ -244,6 +244,7 @@ export function getFinancialRecordsWithNotes(): Result<Vec<FinancialRecord>, str
 
     return Result.Ok(filteredRecords);
 }
+
 
 $query;
 export function getFinancialRecordsWithoutNotes(): Result<Vec<FinancialRecord>, string> {
