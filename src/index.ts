@@ -21,7 +21,17 @@ const financialRecordStorage = new StableBTreeMap<string, FinancialRecord>(0, 44
 
 $query;
 export function getFinancialRecords(): Result<Vec<FinancialRecord>, string> {
-    return Result.Ok(financialRecordStorage.values());
+    try {
+        const records = financialRecordStorage.values();
+        if (records.length === 0) {
+            // If considering an empty record set as an error situation
+            return Result.Err('No financial records found.');
+        }
+        return Result.Ok(records);
+    } catch (error) {
+        // In case there's a need to catch and handle any unexpected error
+        return Result.Err('An unexpected error occurred while retrieving financial records.');
+    }
 }
 
 $query;
