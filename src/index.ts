@@ -34,6 +34,11 @@ export function getFinancialRecord(id: string): Result<FinancialRecord, string> 
 
 $update;
 export function addFinancialRecord(payload: FinancialRecordPayload): Result<FinancialRecord, string> {
+    // Validate the payload
+    if (!payload.amount || !payload.category ) {
+        return Result.Err<FinancialRecord, string>('amount and category are required');
+    }
+
     const record: FinancialRecord = { id: uuidv4(), createdAt: ic.time(), updatedAt: Opt.None, ...payload };
     financialRecordStorage.insert(record.id, record);
     return Result.Ok(record);
@@ -41,6 +46,11 @@ export function addFinancialRecord(payload: FinancialRecordPayload): Result<Fina
 
 $update;
 export function updateFinancialRecord(id: string, payload: FinancialRecordPayload): Result<FinancialRecord, string> {
+    // Validate the payload
+    if (!payload.amount || !payload.category ) {
+        return Result.Err<FinancialRecord, string>('amount and category are required');
+    }
+
     return match(financialRecordStorage.get(id), {
         Some: (record) => {
             const updatedRecord: FinancialRecord = {...record, ...payload, updatedAt: Opt.Some(ic.time())};
@@ -53,6 +63,11 @@ export function updateFinancialRecord(id: string, payload: FinancialRecordPayloa
 
 $update;
 export function deleteFinancialRecord(id: string): Result<FinancialRecord, string> {
+    // Validate the id
+    if (!id) {
+        return Result.Err<FinancialRecord, string>('id is required');
+    }
+
     return match(financialRecordStorage.remove(id), {
         Some: (deletedRecord) => Result.Ok<FinancialRecord, string>(deletedRecord),
         None: () => Result.Err<FinancialRecord, string>(`couldn't delete a financial record with id=${id}. record not found.`)
@@ -61,12 +76,22 @@ export function deleteFinancialRecord(id: string): Result<FinancialRecord, strin
 
 $query;
 export function getFinancialRecordsByCategory(category: string): Result<Vec<FinancialRecord>, string> {
+    // Validate the category
+    if (!category) {
+        return Result.Err<Vec<FinancialRecord>, string>('category is required');
+    }
+
     const filteredRecords = financialRecordStorage.values().filter(record => record.category === category);
     return Result.Ok(filteredRecords);
 }
 
 $query;
 export function getFinancialRecordsByDateRange(startDate: nat64, endDate: nat64): Result<Vec<FinancialRecord>, string> {
+    // Validate the date range
+    if (!startDate || !endDate) {
+        return Result.Err<Vec<FinancialRecord>, string>('startDate and endDate are required');
+    }
+
     const filteredRecords = financialRecordStorage.values().filter(record => record.createdAt >= startDate && record.createdAt <= endDate);
     return Result.Ok(filteredRecords);
 }
@@ -87,6 +112,11 @@ export function getFinancialSummary(): Result<Record<{ totalIncome: number; tota
 
 $query;
 export function getExpensesGreaterThan(amount: number): Result<Vec<FinancialRecord>, string> {
+    // Validate the amount
+    if (!amount) {
+        return Result.Err<Vec<FinancialRecord>, string>('amount is required');
+    }
+
     const filteredRecords = financialRecordStorage.values().filter(record => record.amount < 0 && Math.abs(record.amount) > amount);
     return Result.Ok(filteredRecords);
 }
@@ -94,6 +124,11 @@ export function getExpensesGreaterThan(amount: number): Result<Vec<FinancialReco
 
 $query;
 export function getIncomesLessThan(amount: number): Result<Vec<FinancialRecord>, string> {
+    // Validate the amount
+    if (!amount) {
+        return Result.Err<Vec<FinancialRecord>, string>('amount is required');
+    }
+
     const filteredRecords = financialRecordStorage.values().filter(record => record.amount > 0 && record.amount < amount);
     return Result.Ok(filteredRecords);
 }
