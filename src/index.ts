@@ -75,6 +75,28 @@ export function updateFinancialRecord(id: string, payload: FinancialRecordPayloa
 }
 
 $update;
+export function updateExpenseCategory(oldCategory: string, newCategory: string): Result<Vec<FinancialRecord>, string> {
+    // Validate the old and new categories
+    if (!oldCategory || !newCategory) {
+        return Result.Err('oldCategory and newCategory are required.');
+    }
+
+    const records = financialRecordStorage.values().filter(record => record.category === oldCategory);
+
+    // Check if any records were found for the old category
+    if (records.length === 0) {
+        return Result.Err(`No financial records found for category: ${oldCategory}.`);
+    }
+
+    records.forEach(record => {
+        record.category = newCategory;
+        financialRecordStorage.insert(record.id, record);
+    });
+
+    return Result.Ok(records);
+}
+
+$update;
 export function deleteFinancialRecord(id: string): Result<FinancialRecord, string> {
     // Validate the id
     if (!id) {
