@@ -14,11 +14,31 @@ type FinancialRecordPayload = record {
   amount : float64;
 };
 type _AzleResult = variant { Ok : FinancialRecord; Err : text };
-type _AzleResult_1 = variant { Ok : vec FinancialRecord; Err : text };
+type _AzleResult_1 = variant { Ok : float64; Err : text };
+type _AzleResult_2 = variant { Ok : vec FinancialRecord; Err : text };
+type _AzleResult_3 = variant {
+  Ok : _InlineGetFinancialSummaryReturnTypeTypeArg0;
+  Err : text;
+};
+type _InlineGetFinancialSummaryReturnTypeTypeArg0 = record {
+  netFlow : float64;
+  totalIncome : float64;
+  totalExpense : float64;
+};
 service : () -> {
   addFinancialRecord : (FinancialRecordPayload) -> (_AzleResult);
   deleteFinancialRecord : (text) -> (_AzleResult);
+  getAverageMonthlyExpenses : () -> (_AzleResult_1) query;
+  getAverageMonthlyIncome : () -> (_AzleResult_1) query;
+  getExpensesGreaterThan : (float64) -> (_AzleResult_2) query;
   getFinancialRecord : (text) -> (_AzleResult) query;
-  getFinancialRecords : () -> (_AzleResult_1) query;
+  getFinancialRecords : () -> (_AzleResult_2) query;
+  getFinancialRecordsByCategory : (text) -> (_AzleResult_2) query;
+  getFinancialRecordsByDateRange : (nat64, nat64) -> (_AzleResult_2) query;
+  getFinancialRecordsWithNotes : () -> (_AzleResult_2) query;
+  getFinancialRecordsWithoutNotes : () -> (_AzleResult_2) query;
+  getFinancialSummary : () -> (_AzleResult_3) query;
+  getIncomesLessThan : (float64) -> (_AzleResult_2) query;
+  getSmallestIncome : () -> (_AzleResult) query;
   updateFinancialRecord : (text, FinancialRecordPayload) -> (_AzleResult);
 }

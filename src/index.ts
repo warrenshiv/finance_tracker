@@ -60,6 +60,72 @@ export function deleteFinancialRecord(id: string): Result<FinancialRecord, strin
     });
 }
 
+$query;
+export function getFinancialRecordsByCategory(category: string): Result<Vec<FinancialRecord>, string> {
+    const filteredRecords = financialRecordStorage.values().filter(record => record.category === category);
+    return Result.Ok(filteredRecords);
+}
+
+$query;
+export function getFinancialRecordsByDateRange(startDate: nat64, endDate: nat64): Result<Vec<FinancialRecord>, string> {
+    const filteredRecords = financialRecordStorage.values().filter(record => record.date >= startDate && record.date <= endDate);
+    return Result.Ok(filteredRecords);
+}
+
+$query;
+export function getFinancialSummary(): Result<Record<{ totalIncome: number; totalExpense: number; netFlow: number; }>, string> {
+    let totalIncome = 0;
+    let totalExpense = 0;
+    financialRecordStorage.values().forEach(record => {
+        if (record.amount > 0) {
+            totalIncome += record.amount;
+        } else {
+            totalExpense += record.amount;
+        }
+    });
+    return Result.Ok({ totalIncome, totalExpense, netFlow: totalIncome + totalExpense });
+}
+
+$query;
+export function getExpensesGreaterThan(amount: number): Result<Vec<FinancialRecord>, string> {
+    const filteredRecords = financialRecordStorage.values().filter(record => record.amount < 0 && Math.abs(record.amount) > amount);
+    return Result.Ok(filteredRecords);
+}
+
+
+$query;
+export function getIncomesLessThan(amount: number): Result<Vec<FinancialRecord>, string> {
+    const filteredRecords = financialRecordStorage.values().filter(record => record.amount > 0 && record.amount < amount);
+    return Result.Ok(filteredRecords);
+}
+
+$query;
+export function getAverageMonthlyExpenses(): Result<number, string> {
+    const expenses = financialRecordStorage.values().filter(record => record.amount < 0);
+    const totalExpenses = expenses.reduce((sum, record) => sum + Math.abs(record.amount), 0);
+    return Result.Ok(totalExpenses / 12);
+}
+
+$query;
+export function getAverageMonthlyIncome(): Result<number, string> {
+    const incomes = financialRecordStorage.values().filter(record => record.amount > 0);
+    const totalIncome = incomes.reduce((sum, record) => sum + record.amount, 0);
+    return Result.Ok(totalIncome / 12);
+}
+
+$query;
+export function getFinancialRecordsWithNotes(): Result<Vec<FinancialRecord>, string> {
+    const filteredRecords = financialRecordStorage.values().filter(record => record.notes !== null);
+    return Result.Ok(filteredRecords);
+}
+
+$query;
+export function getFinancialRecordsWithoutNotes(): Result<Vec<FinancialRecord>, string> {
+    const filteredRecords = financialRecordStorage.values().filter(record => record.notes === null);
+    return Result.Ok(filteredRecords);
+}
+
+
 // a workaround to make uuid package work with Azle
 globalThis.crypto = {
     // @ts-ignore
