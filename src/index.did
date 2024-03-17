@@ -28,6 +28,7 @@ service : () -> {
   addFinancialRecord : (FinancialRecordPayload) -> (_AzleResult);
   deleteFinancialRecord : (text) -> (_AzleResult);
   exportFinancialData : (text) -> (_AzleResult_1) query;
+  forecastFutureExpenses : (float64) -> (_AzleResult_2) query;
   getAverageMonthlyExpenses : () -> (_AzleResult_2) query;
   getAverageMonthlyIncome : () -> (_AzleResult_2) query;
   getExpensesGreaterThan : (float64) -> (_AzleResult_3) query;

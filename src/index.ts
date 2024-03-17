@@ -322,6 +322,34 @@ export function exportFinancialData(format: string): Result<string, string> {
     }
 }
 
+$query;
+export function forecastFutureExpenses(monthsAhead: number): Result<number, string> {
+    if (!monthsAhead || isNaN(monthsAhead)) {
+        return Result.Err('Invalid input: monthsAhead is required and must be a number.');
+    }
+    if (monthsAhead <= 0) {
+        return Result.Err('Invalid input: monthsAhead must be greater than 0.');
+    }
+
+    const expenses = financialRecordStorage.values().filter(record => record.amount < 0);
+    
+    // Ensure there are enough expense records to make a meaningful forecast
+    if (expenses.length === 0) {
+        return Result.Err('Insufficient data: No expense records found.');
+    }
+
+    const totalExpenses = expenses.reduce((sum, record) => sum + Math.abs(record.amount), 0);
+    
+    // Prevent division by zero by ensuring the expenses array is not empty
+    if (expenses.length === 0) {
+        return Result.Err('Division by zero error: No expense records available.');
+    }
+
+    const monthlyAverage = totalExpenses / expenses.length;
+
+    // Forecast future expenses based on the average
+    return Result.Ok(monthlyAverage * monthsAhead);
+}
 
 
 // a workaround to make uuid package work with Azle
