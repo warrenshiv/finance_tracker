@@ -280,6 +280,50 @@ export function getFinancialRecordsWithoutNotes(): Result<Vec<FinancialRecord>, 
     return Result.Ok(filteredRecords);
 }
 
+$query;
+export function exportFinancialData(format: string): Result<string, string> {
+    if (!format) {
+        return Result.Err('Format is required.');
+    }
+
+    const normalizedFormat = format.toLowerCase();
+    if (normalizedFormat !== 'json') {
+        return Result.Err('Unsupported format. Currently, only JSON export is available.');
+    }
+
+    try {
+        const data = financialRecordStorage.values();
+
+        if (data.length === 0) {
+            return Result.Err('No financial data available to export.');
+        }
+
+        // Custom replacer function to handle bigint serialization
+        const replacer = (key: string, value: any) => {
+            if (typeof value === 'bigint') {
+                return value.toString();
+            }
+            return value;
+        };
+
+        const jsonData = JSON.stringify(data, replacer);
+
+        if (!jsonData) {
+            return Result.Err('Failed to serialize financial data.');
+        }
+
+        return Result.Ok(jsonData);
+    } catch (error) {
+        if (error instanceof Error) {
+            return Result.Err(`An error occurred during export: ${error.message}`);
+        } else {
+            return Result.Err('An unknown error occurred during export.');
+        }
+    }
+}
+
+
+
 // a workaround to make uuid package work with Azle
 globalThis.crypto = {
     // @ts-ignore
