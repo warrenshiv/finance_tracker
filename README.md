@@ -20,6 +20,7 @@ Clone the application repository to your local machine:
 ```bash
 git https://github.com/warrenshiv/finance_tracker.git
 cd finance_tracker
+```
 
 ## 🛠 Functionalities Overview
 
